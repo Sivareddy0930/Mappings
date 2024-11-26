@@ -2,6 +2,7 @@ package com.dev.manytomany;
 
 import com.dev.manytomany.entity.Employee;
 import com.dev.manytomany.repository.EmployeeRepository;
+import com.dev.manytomany.service.EmployeeProjectService;
 import com.dev.manytomany.service.EmployeeProjectServiceGetData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,10 +28,13 @@ public class ManytoManyAppApplicationTests {
 	@InjectMocks
 	private EmployeeProjectServiceGetData serviceGetData;
 
+	@InjectMocks
+	private EmployeeProjectService employeeProjectService;
+
+
 	@BeforeEach
 	public void setUp() {
 
-		// Mocking repository behavior
 		Employee employee1 = new Employee("Napo", "Napo@example.com", "Java");
 		employee1.setEid(1L);
 
@@ -50,21 +54,58 @@ public class ManytoManyAppApplicationTests {
 
 		// Validate response body
 		Map<String, Object> employees = response.getBody();
-		List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody().get("response");
 		assertEquals(2, employees.size());
 
-		// Validate first employee
-		List<Employee> employee1 = (List<Employee>) employees.get("Data");
-		assertEquals(1L, employee1.get(0).getEid());
-		assertEquals("Napo", employee1.get(0).getName());
-		assertEquals("Napo@example.com", employee1.get(0).getEmail());
-		assertEquals("Java", employee1.get(0).getTechnicalSkills());
+		List<Object> data = (List<Object>) employees.get("Data");
+		System.out.println(data);
 
-//		// Validate second employee
-//		Employee employee2 = (Employee) employees.get("Data");
-//		assertEquals(1L, employee2.getEid());
-//		assertEquals("Napo", employee2.getName());
-//		assertEquals("Napo@example.com", employee2.getEmail());
-//		assertEquals("Java", employee1.getTechnicalSkills());
+
+		// Validate first employee
+		Object o = data.get(0);
+		System.out.println(o);
+		Map<String, Object> map = (Map<String, Object>) o;
+		Employee employee1 = new Employee(
+				(Long) map.get("eid"),
+				(String) map.get("name"),
+				(String) map.get("email"),
+				(String) map.get("technicalSkills")
+		);
+
+
+		assertEquals(1L, employee1.getEid());
+		assertEquals("Napo", employee1.getName());
+		assertEquals("Napo@example.com", employee1.getEmail());
+		assertEquals("Java", employee1.getTechnicalSkills());
+
+
+		Object o1 = data.get(1);
+		System.out.println(o1);
+		Map<String, Object> map1 = (Map<String, Object>) o1;
+		Employee employee2 = new Employee(
+				(Long) map1.get("eid"),
+				(String) map1.get("name"),
+				(String) map1.get("email"),
+				(String) map1.get("technicalSkills")
+		);
+
+
+		assertEquals(2L, employee2.getEid());
+		assertEquals("Qwee", employee2.getName());
+		assertEquals("Qwee@example.com", employee2.getEmail());
+		assertEquals("Spring", employee2.getTechnicalSkills());
+
+	}
+
+	@Test
+	public void saveEmployeeTest(){
+		Employee employee = new Employee(1L,"ram","ram@gmail.com","java");
+
+		when(employeeRepository.save(employee)).thenReturn(employee);
+
+		ResponseEntity<Map<String, Object>> response = employeeProjectService.saveEmployee(employee);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals("Employee created successfully with Employee Id: "+1, response.getBody().get("Message"));
+
 	}
 }

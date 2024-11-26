@@ -142,8 +142,8 @@ public class EmployeeProjectServiceGetData {
         }
 
         Map<String, Object> mapResponse = new HashMap<>();
-        mapResponse.put("statusCode", HttpStatus.OK.value());
-        mapResponse.put("response", projectDetails);
+        mapResponse.put(STATUS_CODE_KEY, HttpStatus.OK.value());
+        mapResponse.put(RESPONSE_KEY, projectDetails);
 
         return ResponseEntity.status(HttpStatus.OK).body(mapResponse);
     }

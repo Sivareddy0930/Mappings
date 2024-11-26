@@ -37,5 +37,11 @@ public class Employee {
         this.technicalSkills = technicalSkills;
     }
 
+    public Employee(Long eid, String name, String email, String technicalSkills) {
+        this.eid=eid;
+        this.name = name;
+        this.email = email;
+        this.technicalSkills = technicalSkills;
+    }
 }
 
