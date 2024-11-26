@@ -126,29 +126,53 @@ public class EmployeeProjectServiceGetData {
 
 
 
-    public ResponseEntity<Map<String,Object>> getAllProjects(){
-
+    public ResponseEntity<Map<String, Object>> getAllProjects() {
         List<Project> projectsList = projectRepository.findAll();
 
+        List<Map<String, Object>> projectDetails = new ArrayList<>();
+
+        for (Project project : projectsList) {
+            Map<String, Object> projectData = new HashMap<>();
+
+            projectData.put("id", project.getId());
+            projectData.put("name", project.getName());
+            projectData.put("description", project.getDescription());
+
+            projectDetails.add(projectData);
+        }
+
         Map<String, Object> mapResponse = new HashMap<>();
-
-        mapResponse.put(STATUS_CODE_KEY,HttpStatus.OK.value());
-        mapResponse.put(RESPONSE_KEY,projectsList);
-
+        mapResponse.put("statusCode", HttpStatus.OK.value());
+        mapResponse.put("response", projectDetails);
 
         return ResponseEntity.status(HttpStatus.OK).body(mapResponse);
-
     }
+
 
 
     public ResponseEntity<Map<String,Object>> getAllEmployees(){
 
         List<Employee> employeesList = employeeRepository.findAll();
 
+        List<Map<String, Object>> employeeDetails = new ArrayList<>();
+
+        for (Employee employee : employeesList) {
+            Map<String, Object> employeeData = new HashMap<>();
+
+            // Only add employee details without the projects
+            employeeData.put("eid", employee.getEid());
+            employeeData.put("name", employee.getName());
+            employeeData.put("email", employee.getEmail());
+            employeeData.put("technicalSkills", employee.getTechnicalSkills());
+
+            // Add the employee data to the list
+            employeeDetails.add(employeeData);
+        }
+
         Map<String, Object> mapResponse = new HashMap<>();
 
         mapResponse.put(STATUS_CODE_KEY,HttpStatus.OK.value());
-        mapResponse.put(RESPONSE_KEY,employeesList);
+        mapResponse.put(RESPONSE_KEY,employeeDetails);
 
         return ResponseEntity.status(HttpStatus.OK).body(mapResponse);
 
